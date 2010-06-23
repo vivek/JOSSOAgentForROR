@@ -21,7 +21,7 @@ module Main
   # Check the user's authory
   def authorize
     begin
-      partner_application_entry_url = request.url
+      partner_application_entry_url = request.url if partner_application_entry_url.nil? 
       puts partner_application_entry_url
       if (session[:username].nil?)
         login(partner_application_entry_url, params[:josso_assertion_id])
@@ -32,13 +32,16 @@ module Main
   end
 
   def login(partner_application_entry_url, josso_assertion_id)
+    logger.info("Partner app URL: "+partner_application_entry_url)
     begin
       if (josso_assertion_id.nil?)
         redirect_to APP_CONFIG['josso_root'] + "signon/login.do?josso_back_to=" + partner_application_entry_url
       else
         jossoagent = Jossoagent.new(APP_CONFIG['josso_root'] + 'services/SSOIdentityManager', APP_CONFIG['josso_root'] + 'services/SSOIdentityProvider')
         josso_session_id = jossoagent.get_josso_session_id(josso_assertion_id)
+        logger.info("josso_session_id: #{josso_session_id}")
         if (josso_session_id.nil?)
+          logger.error "josso_session_id is Nil!"
           reset_session
           redirect_to APP_CONFIG['josso_root'] + "signon/login.do?josso_back_to=" + partner_application_entry_url
           # login_error('Sorry! Generate josso_session_id error.')
@@ -46,7 +49,15 @@ module Main
         end
         session[:josso_session_id] = josso_session_id
         sso_user = jossoagent.find_user_in_session(josso_session_id)
+        logger.info("SSO User Name: "+sso_user.name)
+        logger.info("SSO User security domain: "+sso_user.securitydomain)
+
+        sso_user.properties.each do |k,v|
+          "#{k}=>#{v}"
+        end
+        
         if (sso_user.nil?)
+          logger.error("Nil SSO user")
           reset_session
           redirect_to APP_CONFIG['josso_root'] + "signon/login.do?josso_back_to=" + partner_application_entry_url
           # login_error('Sorry! Fetching sso_user error.')

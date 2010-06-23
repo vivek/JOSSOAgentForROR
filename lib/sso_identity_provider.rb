@@ -1,42 +1,48 @@
+require 'josso_classes.rb'
 require 'sso_identity_provider_classes.rb'
-
 require 'soap/rpc/driver'
 
 class SSOIdentityProvider < ::SOAP::RPC::Driver
-  DefaultEndpointUrl = "http://localhost:8080/josso/services/SSOIdentityProvider"
-  MappingRegistry = ::SOAP::Mapping::Registry.new
+  DefaultEndpointUrl = "http://replace this !"
+  NsAssertIdentityWithSimpleAuthentication = "http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityProvider/assertIdentityWithSimpleAuthentication"
+  NsGlobalSignoff = "http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityProvider/globalSignoff"
+  NsResolveAuthenticationAssertion = "http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityProvider/resolveAuthenticationAssertion"
 
   Methods = [
-    [ XSD::QName.new("http://josso.org/gateway/identity/service/ws/impl", "assertIdentityWithSimpleAuthentication"),
-      "",
-      "assertIdentityWithSimpleAuthentication",
-      [ ["in", "in0", ["::SOAP::SOAPString"]],
-        ["in", "in1", ["::SOAP::SOAPString"]],
-        ["retval", "assertIdentityWithSimpleAuthenticationReturn", ["::SOAP::SOAPString"]] ],
-      { :request_style =>  :rpc, :request_use =>  :encoded,
-        :response_style => :rpc, :response_use => :encoded }
-    ],
-    [ XSD::QName.new("http://josso.org/gateway/identity/service/ws/impl", "resolveAuthenticationAssertion"),
-      "",
+    [ XSD::QName.new(NsResolveAuthenticationAssertion, "resolveAuthenticationAssertion"),
+      "http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityProvider/resolveAuthenticationAssertion",
       "resolveAuthenticationAssertion",
-      [ ["in", "in0", ["::SOAP::SOAPString"]],
-        ["retval", "resolveAuthenticationAssertionReturn", ["::SOAP::SOAPString"]] ],
+      [ ["in", "ResolveAuthenticationAssertionRequest", ["ResolveAuthenticationAssertionRequestType", "http://josso.org/gateway/ws/1.1/protocol", "ResolveAuthenticationAssertionRequestType"]],
+        ["retval", "ResolveAuthenticationAssertionResponse", ["ResolveAuthenticationAssertionResponseType", "http://josso.org/gateway/ws/1.1/protocol", "ResolveAuthenticationAssertionResponseType"]] ],
       { :request_style =>  :rpc, :request_use =>  :encoded,
-        :response_style => :rpc, :response_use => :encoded }
+        :response_style => :rpc, :response_use => :encoded,
+        :faults => {"AssertionNotValidFault"=>{:ns=>"http://josso.org/gateway/ws/1.1/wsdl", :name=>"AssertionNotValidFault", :namespace=>"http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityProvider/resolveAuthenticationAssertion", :use=>"encoded", :encodingstyle=>"document"}, "SSOIdentityProviderFault"=>{:ns=>"http://josso.org/gateway/ws/1.1/wsdl", :name=>"SSOIdentityProviderFault", :namespace=>"http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityProvider/resolveAuthenticationAssertion", :use=>"encoded", :encodingstyle=>"document"}} }
     ],
-    [ XSD::QName.new("http://josso.org/gateway/identity/service/ws/impl", "globalSignoff"),
-      "",
-      "globalSignoff",
-      [ ["in", "in0", ["::SOAP::SOAPString"]] ],
+    [ XSD::QName.new(NsAssertIdentityWithSimpleAuthentication, "assertIdentityWithSimpleAuthentication"),
+      "http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityProvider/assertIdentityWithSimpleAuthentication",
+      "assertIdentityWithSimpleAuthentication",
+      [ ["in", "AssertIdentityWithSimpleAuthenticationRequest", ["AssertIdentityWithSimpleAuthenticationRequestType", "http://josso.org/gateway/ws/1.1/protocol", "AssertIdentityWithSimpleAuthenticationRequestType"]],
+        ["retval", "AssertIdentityWithSimpleAuthenticationResponse", ["AssertIdentityWithSimpleAuthenticationResponseType", "http://josso.org/gateway/ws/1.1/protocol", "AssertIdentityWithSimpleAuthenticationResponseType"]] ],
       { :request_style =>  :rpc, :request_use =>  :encoded,
-        :response_style => :rpc, :response_use => :encoded }
+        :response_style => :rpc, :response_use => :encoded,
+        :faults => {"SSOIdentityProviderFault"=>{:ns=>"http://josso.org/gateway/ws/1.1/wsdl", :name=>"SSOIdentityProviderFault", :namespace=>"http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityProvider/assertIdentityWithSimpleAuthentication", :use=>"encoded", :encodingstyle=>"document"}} }
+    ],
+    [ XSD::QName.new(NsGlobalSignoff, "globalSignoff"),
+      "http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityProvider/globalSignoff",
+      "globalSignoff",
+      [ ["in", "GlobalSignoffRequest", ["GlobalSignoffRequestType", "http://josso.org/gateway/ws/1.1/protocol", "GlobalSignoffRequestType"]],
+        ["retval", "GlobalSignoffResponse", ["GlobalSignoffResponseType", "http://josso.org/gateway/ws/1.1/protocol", "GlobalSignoffResponseType"]] ],
+      { :request_style =>  :rpc, :request_use =>  :encoded,
+        :response_style => :rpc, :response_use => :encoded,
+        :faults => {"SSOIdentityProviderFault"=>{:ns=>"http://josso.org/gateway/ws/1.1/wsdl", :name=>"SSOIdentityProviderFault", :namespace=>"http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityProvider/globalSignoff", :use=>"encoded", :encodingstyle=>"document"}} }
     ]
   ]
 
   def initialize(endpoint_url = nil)
     endpoint_url ||= DefaultEndpointUrl
     super(endpoint_url, nil)
-    self.mapping_registry = MappingRegistry
+    self.mapping_registry = JossoMappingRegistry::EncodedRegistry
+    self.literal_mapping_registry = JossoMappingRegistry::LiteralRegistry
     init_methods
   end
 
@@ -60,4 +66,6 @@ private
     end
   end
 end
+
+
 

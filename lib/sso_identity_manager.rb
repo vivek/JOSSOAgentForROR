@@ -1,87 +1,59 @@
+require 'josso_classes.rb'
 require 'sso_identity_manager_classes.rb'
-
 require 'soap/rpc/driver'
 
-class SSOIdentityManager < ::SOAP::RPC::Driver
-  DefaultEndpointUrl = "http://localhost:8080/josso/services/SSOIdentityManager"
-  MappingRegistry = ::SOAP::Mapping::Registry.new
 
-  MappingRegistry.set(
-    SSOUser,
-    ::SOAP::SOAPStruct,
-    ::SOAP::Mapping::Registry::TypedStructFactory,
-    { :type => XSD::QName.new("http://josso.org/gateway/identity/service/ws/impl", "SSOUser") }
-  )
-  MappingRegistry.set(
-    ArrayOfSSONameValuePair,
-    ::SOAP::SOAPArray,
-    ::SOAP::Mapping::Registry::TypedArrayFactory,
-    { :type => XSD::QName.new("http://josso.org/gateway/identity/service/ws/impl", "SSONameValuePair") }
-  )
-  MappingRegistry.set(
-    ArrayOfSSORole,
-    ::SOAP::SOAPArray,
-    ::SOAP::Mapping::Registry::TypedArrayFactory,
-    { :type => XSD::QName.new("http://josso.org/gateway/identity/service/ws/impl", "SSORole") }
-  )
-  MappingRegistry.set(
-    SSONameValuePair,
-    ::SOAP::SOAPStruct,
-    ::SOAP::Mapping::Registry::TypedStructFactory,
-    { :type => XSD::QName.new("http://josso.org/gateway/identity/service/ws/impl", "SSONameValuePair") }
-  )
-  MappingRegistry.set(
-    SSORole,
-    ::SOAP::SOAPStruct,
-    ::SOAP::Mapping::Registry::TypedStructFactory,
-    { :type => XSD::QName.new("http://josso.org/gateway/identity/service/ws/impl", "SSORole") }
-  )
+class SSOIdentityManager < ::SOAP::RPC::Driver
+  DefaultEndpointUrl = "http://replace this !"
+  NsFindRolesBySSOSessionId = "http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityManager/findRolesBySSOSessionId"
+  NsFindUserInSecurityDomain = "http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityManager/findUserInSecurityDomain"
+  NsFindUserInSession = "http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityManager/findUserInSession"
+  NsUserExists = "http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityManager/userExists"
 
   Methods = [
-    [ XSD::QName.new("http://josso.org/gateway/identity/service/ws/impl", "findUser"),
-      "",
-      "findUser",
-      [ ["in", "in0", ["::SOAP::SOAPString"]],
-        ["retval", "findUserReturn", ["SSOUser", "http://josso.org/gateway/identity/service/ws/impl", "SSOUser"]] ],
-      { :request_style =>  :rpc, :request_use =>  :encoded,
-        :response_style => :rpc, :response_use => :encoded }
-    ],
-    [ XSD::QName.new("http://josso.org/gateway/identity/service/ws/impl", "findUserInSession"),
-      "",
+    [ XSD::QName.new(NsFindUserInSession, "findUserInSession"),
+      "http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityManager/findUserInSession",
       "findUserInSession",
-      [ ["in", "in0", ["::SOAP::SOAPString"]],
-        ["retval", "findUserInSessionReturn", ["SSOUser", "http://josso.org/gateway/identity/service/ws/impl", "SSOUser"]] ],
+      [ ["in", "FindUserInSessionRequest", ["FindUserInSessionRequestType", "http://josso.org/gateway/ws/1.1/protocol", "FindUserInSessionRequestType"]],
+        ["retval", "FindUserInSessionResponse", ["FindUserInSessionResponseType", "http://josso.org/gateway/ws/1.1/protocol", "FindUserInSessionResponseType"]] ],
       { :request_style =>  :rpc, :request_use =>  :encoded,
-        :response_style => :rpc, :response_use => :encoded }
+        :response_style => :rpc, :response_use => :encoded,
+        :faults => {"SSOIdentityManagerErrorFault"=>{:ns=>"http://josso.org/gateway/ws/1.1/wsdl", :name=>"SSOIdentityManagerErrorFault", :namespace=>"http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityManager/findUserInSession", :use=>"encoded", :encodingstyle=>"http://schemas.xmlsoap.org/soap/encoding/"}, "NoSuchUserErrorFault"=>{:ns=>"http://josso.org/gateway/ws/1.1/wsdl", :name=>"NoSuchUserErrorFault", :namespace=>"http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityManager/findUserInSession", :use=>"encoded", :encodingstyle=>"http://schemas.xmlsoap.org/soap/encoding/"}, "InvalidSessionErrorFault"=>{:ns=>"http://josso.org/gateway/ws/1.1/wsdl", :name=>"InvalidSessionErrorFault", :namespace=>"http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityManager/findUserInSession", :use=>"encoded", :encodingstyle=>"http://schemas.xmlsoap.org/soap/encoding/"}} }
     ],
-    [ XSD::QName.new("http://josso.org/gateway/identity/service/ws/impl", "findRolesByUsername"),
-      "",
-      "findRolesByUsername",
-      [ ["in", "in0", ["::SOAP::SOAPString"]],
-        ["retval", "findRolesByUsernameReturn", ["SSORole[]", "http://josso.org/gateway/identity/service/ws/impl", "SSORole"]] ],
+    [ XSD::QName.new(NsFindUserInSecurityDomain, "findUserInSecurityDomain"),
+      "http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityManager/findUserInSecurityDomain",
+      "findUserInSecurityDomain",
+      [ ["in", "FindUserInSecurityDomainRequest", ["FindUserInSecurityDomainRequestType", "http://josso.org/gateway/ws/1.1/protocol", "FindUserInSecurityDomainRequestType"]],
+        ["retval", "FindUserInSecurityDomainResponse", ["FindUserInSecurityDomainResponseType", "http://josso.org/gateway/ws/1.1/protocol", "FindUserInSecurityDomainResponseType"]] ],
       { :request_style =>  :rpc, :request_use =>  :encoded,
-        :response_style => :rpc, :response_use => :encoded }
+        :response_style => :rpc, :response_use => :encoded,
+        :faults => {"SSOIdentityManagerErrorFault"=>{:ns=>"http://josso.org/gateway/ws/1.1/wsdl", :name=>"SSOIdentityManagerErrorFault", :namespace=>"http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityManager/findUserInSecurityDomain", :use=>"encoded", :encodingstyle=>"document"}, "NoSuchUserErrorFault"=>{:ns=>"http://josso.org/gateway/ws/1.1/wsdl", :name=>"NoSuchUserErrorFault", :namespace=>"http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityManager/findUserInSecurityDomain", :use=>"encoded", :encodingstyle=>"document"}} }
     ],
-    [ XSD::QName.new("http://josso.org/gateway/identity/service/ws/impl", "userExists"),
-      "",
+    [ XSD::QName.new(NsFindRolesBySSOSessionId, "findRolesBySSOSessionId"),
+      "http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityManager/findRolesBySSOSessionId",
+      "findRolesBySSOSessionId",
+      [ ["in", "FindRolesBySSOSessionIdRequest", ["FindRolesBySSOSessionIdRequestType", "http://josso.org/gateway/ws/1.1/protocol", "FindRolesBySSOSessionIdRequestType"]],
+        ["retval", "FindRolesBySSOSessionIdResponse", ["FindRolesBySSOSessionIdResponseType", "http://josso.org/gateway/ws/1.1/protocol", "FindRolesBySSOSessionIdResponseType"]] ],
+      { :request_style =>  :rpc, :request_use =>  :encoded,
+        :response_style => :rpc, :response_use => :encoded,
+        :faults => {"SSOIdentityManagerErrorFault"=>{:ns=>"http://josso.org/gateway/ws/1.1/wsdl", :name=>"SSOIdentityManagerErrorFault", :namespace=>"http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityManager/findRolesBySSOSessionId", :use=>"encoded", :encodingstyle=>"document"}, "InvalidSessionErrorFault"=>{:ns=>"http://josso.org/gateway/ws/1.1/wsdl", :name=>"InvalidSessionErrorFault", :namespace=>"http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityManager/findRolesBySSOSessionId", :use=>"encoded", :encodingstyle=>"document"}} }
+    ],
+    [ XSD::QName.new(NsUserExists, "userExists"),
+      "http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityManager/userExists",
       "userExists",
-      [ ["in", "in0", ["::SOAP::SOAPString"]] ],
+      [ ["in", "UserExistsRequest", ["UserExistsRequestType", "http://josso.org/gateway/ws/1.1/protocol", "UserExistsRequestType"]],
+        ["retval", "UserExistsResponse", ["UserExistsResponseType", "http://josso.org/gateway/ws/1.1/protocol", "UserExistsResponseType"]] ],
       { :request_style =>  :rpc, :request_use =>  :encoded,
-        :response_style => :rpc, :response_use => :encoded }
-    ],
-    [ XSD::QName.new("http://josso.org/gateway/identity/service/ws/impl", "initialize"),
-      "",
-      "initialize",
-      [],
-      { :request_style =>  :rpc, :request_use =>  :encoded,
-        :response_style => :rpc, :response_use => :encoded }
+        :response_style => :rpc, :response_use => :encoded,
+        :faults => {"SSOIdentityManagerErrorFault"=>{:ns=>"http://josso.org/gateway/ws/1.1/wsdl", :name=>"SSOIdentityManagerErrorFault", :namespace=>"http://josso.org/gateway/ws/1.1/wsdl/soapbinding/IdentityManager/userExists", :use=>"encoded", :encodingstyle=>"document"}} }
     ]
   ]
 
   def initialize(endpoint_url = nil)
     endpoint_url ||= DefaultEndpointUrl
     super(endpoint_url, nil)
-    self.mapping_registry = MappingRegistry
+    self.mapping_registry = JossoMappingRegistry::EncodedRegistry
+    self.literal_mapping_registry = JossoMappingRegistry::LiteralRegistry
     init_methods
   end
 
@@ -105,4 +77,5 @@ private
     end
   end
 end
+
 
