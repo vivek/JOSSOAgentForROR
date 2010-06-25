@@ -5,14 +5,14 @@
 # partner_application_entry_url: JOSSO service provider URL
 ##
 development:
-    josso_root: http://localhost:8080/sso-gateway/
-    josso_ws_root: http://localhost:8080/sso-gateway/
-    partner_application_entry_url: http://localhost:3000/main
+    josso_root: http://localhost:8080/josso/
+    josso_ws_root: http://localhost:8080/josso/
+    partner_application_entry_url: http://localhost:3000/
 test:
-    josso_root: http://localhost:8080/sso-gateway/
-    josso_ws_root: http://localhost:8080/sso-gateway/
-    partner_application_entry_url: http://localhost:3000/test
+    josso_root: http://localhost:8080/josso/
+    josso_ws_root: http://localhost:8080/josso/
+    partner_application_entry_url: http://localhost:3000/
 production:
-    josso_root: http://localhost:8080/sso-gateway/
-    josso_ws_root: http://localhost:8080/sso-gateway/
-    partner_application_entry_url: http://localhost:3000/test
+    josso_root: http://localhost:8080/josso/
+    josso_ws_root: http://localhost:8080/josso/
+    partner_application_entry_url: http://localhost:3000/
