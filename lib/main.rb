@@ -21,7 +21,11 @@ module Main
   # Check the user's authory
   def authorize
     begin
-      partner_application_entry_url = request.url if partner_application_entry_url.nil? 
+      if(request.headers["X_REQ_HOST"])
+        partner_application_entry_url = "https://#{request.headers['X_REQ_HOST']}#{request.headers['X_REQ_URI']}"
+      else
+        partner_application_entry_url = request.url
+      end
       puts partner_application_entry_url
       if (session[:username].nil?)
         login(partner_application_entry_url, params[:josso_assertion_id])
@@ -37,7 +41,7 @@ module Main
       if (josso_assertion_id.nil?)
         redirect_to APP_CONFIG['josso_root'] + "signon/login.do?josso_back_to=" + partner_application_entry_url
       else
-        jossoagent = Jossoagent.new(APP_CONFIG['josso_root'] + 'services/SSOIdentityManager', APP_CONFIG['josso_root'] + 'services/SSOIdentityProvider')
+        jossoagent = Jossoagent.new(APP_CONFIG['josso_internal_root'] + 'services/SSOIdentityManager', APP_CONFIG['josso_internal_root'] + 'services/SSOIdentityProvider')
         josso_session_id = jossoagent.get_josso_session_id(josso_assertion_id)
         logger.info("josso_session_id: #{josso_session_id}")
         if (josso_session_id.nil?)
@@ -70,7 +74,7 @@ module Main
       end
     rescue Exception => e
       #redirect to unique error page of rece system
-      puts e
+      logger.error("Error: "+e.inspect)
     end
   end
 
@@ -89,8 +93,10 @@ module Main
   # Logout from the Josso
   def logout()
     begin
+      logger.info "Now logging out"
+      logger.info "Session id: #{session[:josso_session_id]}"
       if(!session[:josso_session_id].nil?)
-        jossoagent = Jossoagent.new(APP_CONFIG['josso_root'] + 'services/SSOIdentityManager', APP_CONFIG['josso_root'] + 'services/SSOIdentityProvider')
+        jossoagent = Jossoagent.new(APP_CONFIG['josso_internal_root'] + 'services/SSOIdentityManager', APP_CONFIG['josso_internal_root'] + 'services/SSOIdentityProvider')
         jossoagent.logout(session[:josso_session_id])
       end
     rescue Exception => e

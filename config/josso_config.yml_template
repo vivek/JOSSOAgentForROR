@@ -1,0 +1,18 @@
+## Josso config template
+# josso_root : JOSSO SSO gateway root url
+# josso_ws_root : Josso Web Services end point URL. In most cases same as 
+#                 josso_root.
+# partner_application_entry_url: JOSSO service provider URL
+##
+development:
+    josso_root: http://localhost:8080/sso-gateway/
+    josso_ws_root: http://localhost:8080/sso-gateway/
+    partner_application_entry_url: http://localhost:3000/main
+test:
+    josso_root: http://localhost:8080/sso-gateway/
+    josso_ws_root: http://localhost:8080/sso-gateway/
+    partner_application_entry_url: http://localhost:3000/test
+production:
+    josso_root: http://localhost:8080/sso-gateway/
+    josso_ws_root: http://localhost:8080/sso-gateway/
+    partner_application_entry_url: http://localhost:3000/test
