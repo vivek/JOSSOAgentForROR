@@ -93,7 +93,7 @@ module Main
   # Logout from the Josso
   def logout()
     if(!session[:josso_session_id].nil?)
-      logout(session[:josso_session_id], APP_CONFIG['partner_application_entry_url'])
+      _logout(session[:josso_session_id], APP_CONFIG['partner_application_entry_url'])
     end
   end
 
