@@ -98,7 +98,7 @@ module Main
   end
 
   # This method can be used form any controller for custom logout
-  def logout(session_id, url)
+  def _logout(session_id=session[:josso_session_id], url=APP_CONFIG['partner_application_entry_url'])
     begin
       logger.info "Now logging out"
       logger.info "Session id: #{session[:josso_session_id]}"
