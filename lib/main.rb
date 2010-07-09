@@ -92,19 +92,24 @@ module Main
 
   # Logout from the Josso
   def logout()
+    if(!session[:josso_session_id].nil?)
+      logout(session[:josso_session_id], APP_CONFIG['partner_application_entry_url'])
+    end
+  end
+
+  # This method can be used form any controller for custom logout
+  def logout(session_id, url)
     begin
       logger.info "Now logging out"
       logger.info "Session id: #{session[:josso_session_id]}"
-      if(!session[:josso_session_id].nil?)
-        jossoagent = Jossoagent.new(APP_CONFIG['josso_ws_root'] + 'services/SSOIdentityManager', APP_CONFIG['josso_ws_root'] + 'services/SSOIdentityProvider')
-        jossoagent.logout(session[:josso_session_id])
-      end
+      jossoagent = Jossoagent.new(APP_CONFIG['josso_ws_root'] + 'services/SSOIdentityManager', APP_CONFIG['josso_ws_root'] + 'services/SSOIdentityProvider')
+      jossoagent.logout(session_id)
     rescue Exception => e
       puts e
     ensure
       #redirect to unique error page of rece system
       reset_session
-      redirect_to APP_CONFIG['partner_application_entry_url']
+      redirect_to url
     end
   end
 
