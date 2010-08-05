@@ -20,21 +20,17 @@ module Main
   private
   # Check the user's authory
   def authorize
-    begin
-      if(request.headers["X_REQ_HOST"])
-        partner_application_entry_url = "https://#{request.headers['X_REQ_HOST']}#{request.headers['X_REQ_URI']}"
-      else
-        partner_application_entry_url = request.url
-      end
+begin
+      partner_application_entry_url = APP_CONFIG['partner_application_entry_url']
+      partner_application_entry_url = request.url if partner_application_entry_url.nil? 
       puts partner_application_entry_url
       if (session[:username].nil?)
         login(partner_application_entry_url, params[:josso_assertion_id])
       else
         is_josso_session_expire(partner_application_entry_url)
       end
-    end
   end
-
+end
   def login(partner_application_entry_url, josso_assertion_id)
     logger.info("Partner app URL: "+partner_application_entry_url)
     begin
