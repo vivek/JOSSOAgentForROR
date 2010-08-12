@@ -26,8 +26,7 @@ begin
       puts partner_application_entry_url
       if (session[:username].nil?)
         login(partner_application_entry_url, params[:josso_assertion_id])
-      else
-        is_josso_session_expire(partner_application_entry_url)
+
       end
   end
 end
