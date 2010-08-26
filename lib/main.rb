@@ -20,23 +20,26 @@ module Main
   private
   # Check the user's authory
   def authorize
-begin
+    begin
       partner_application_entry_url = APP_CONFIG['partner_application_entry_url']
-      partner_application_entry_url = request.url if partner_application_entry_url.nil? 
-      puts partner_application_entry_url
+      partner_application_entry_url = request.url if partner_application_entry_url.nil?
+      logger.info "Partner URL: #{partner_application_entry_url}"
       if (session[:username].nil?)
         login(partner_application_entry_url, params[:josso_assertion_id])
-
+      elsif(is_josso_session_expired)
+        #force logout
+        logout
       end
+    end
   end
-end
+
   def login(partner_application_entry_url, josso_assertion_id)
     logger.info("Partner app URL: "+partner_application_entry_url)
     begin
       if (josso_assertion_id.nil?)
         redirect_to APP_CONFIG['josso_root'] + "signon/login.do?josso_back_to=" + partner_application_entry_url
       else
-        jossoagent = Jossoagent.new(APP_CONFIG['josso_ws_root'] + 'services/SSOIdentityManager', APP_CONFIG['josso_ws_root'] + 'services/SSOIdentityProvider')
+        jossoagent = josso_agent
         josso_session_id = jossoagent.get_josso_session_id(josso_assertion_id)
         logger.info("josso_session_id: #{josso_session_id}")
         if (josso_session_id.nil?)
@@ -51,10 +54,10 @@ end
         logger.info("SSO User Name: "+sso_user.name)
         logger.info("SSO User security domain: "+sso_user.securitydomain)
 
-        sso_user.properties.each do |k,v|
+        sso_user.properties.each do |k, v|
           "#{k}=>#{v}"
         end
-        
+
         if (sso_user.nil?)
           logger.error("Nil SSO user")
           reset_session
@@ -73,21 +76,23 @@ end
     end
   end
 
-  # Judge the expiry of the session
-  def is_josso_session_expire(partner_application_entry_url)
-    begin
-      puts 30.minutes.to_i
-      if(((Time.now.to_i - session[:session_timer_at].to_i) > 1800))
-        logout()
-      else
-        session[:session_timer_at] = Time.now.to_i
-      end
-    end
+  def josso_agent
+    Jossoagent.new(APP_CONFIG['josso_root'] + 'services/SSOIdentityManager', APP_CONFIG['josso_root'] + 'services/SSOIdentityProvider')
+  end
+
+
+  def is_josso_session_expired
+    return true unless session[:josso_session_id]
+    sso_user = josso_agent.find_user_in_session(session[:josso_session_id])
+    logger.debug("SSO session expired")
+    return true if sso_user.nil?
+    logger.debug("SSO User name in session: #{sso_user.name}")
+    !sso_user.name.eql?(session[:username])
   end
 
   # Logout from the Josso
   def logout()
-    if(!session[:josso_session_id].nil?)
+    if (!session[:josso_session_id].nil?)
       _logout(session[:josso_session_id], APP_CONFIG['partner_application_entry_url'])
     end
   end
@@ -96,9 +101,7 @@ end
   def _logout(session_id=session[:josso_session_id], url=APP_CONFIG['partner_application_entry_url'])
     begin
       logger.info "Now logging out"
-      logger.info "Session id: #{session[:josso_session_id]}"
-      jossoagent = Jossoagent.new(APP_CONFIG['josso_ws_root'] + 'services/SSOIdentityManager', APP_CONFIG['josso_ws_root'] + 'services/SSOIdentityProvider')
-      jossoagent.logout(session_id)
+      josso_agent.logout(session_id)
     rescue Exception => e
       puts e
     ensure
