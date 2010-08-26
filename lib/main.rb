@@ -77,7 +77,7 @@ module Main
   end
 
   def josso_agent
-    Jossoagent.new(APP_CONFIG['josso_root'] + 'services/SSOIdentityManager', APP_CONFIG['josso_root'] + 'services/SSOIdentityProvider')
+    Jossoagent.new(APP_CONFIG['josso_ws_root'] + 'services/SSOIdentityManager', APP_CONFIG['josso_ws_root'] + 'services/SSOIdentityProvider')
   end
 
 
