@@ -7,15 +7,14 @@ Introduction
     Yes, You are right, this is my situation for developed a JOSSO agent for ROR projects called JOSSOAgentForROR. 
     Maybe I should make a good name, whatever.
     
-    Your need and only need is use the "inject_josso_agent" method in the ApplicationController directly
-    then copy josso_config.yml.template to josso_config.yml and modify the file in the directory 
-    "Vendor/rorjossoagent/config".
+    You need "inject_josso_agent" method in the ApplicationController directly
+    then copy josso_config.yml.template to $RAILS_ROOT/config/josso_config.yml and modify it as per your needs.
     
     Please follow the Example.
 
 Example
 =======
-    (1) create a Ruby On Rails application with NetBeans IDE and create a Controller such as TestController.
+    (1) create a Ruby On Rails application
     (2) use the 'inject_josso_agent' method in the ApplicationController.
         class ApplicationController < ActionController::Base
             # The ling below is you need to do.
@@ -24,7 +23,7 @@ Example
             protect_from_forgery # :secret => '82080e75741b9780ebdb607d770322ae'
         end
 
-    (3) Copy josso_config.yml.template to josso_config.yml. Modify the josso_config.yml file, 
+    (3) Copy josso_config.yml.template to $RAILS_ROOT/config/josso_config.yml. Modify the josso_config.yml file, 
         if you don't have josso you can deploy a josso application or use the default configuration 
         in josso_config.yml.
         # josso_root : JOSSO SSO gateway root url
@@ -43,10 +42,10 @@ Example
             josso_root: http://localhost:8080/sso-gateway/
             josso_ws_root: http://localhost:8080/sso-gateway/
             partner_application_entry_url: http://localhost:3000/test
-    (4) Run the server by NetBean or command: ruby script/server
+    (4) Run the server ruby script/server
         And access the url 'partner_application_entry_url', you will see JOSSO login page,
         login with the username and password I told in the top words. OK, that's all.
-    (5) If you have any quetions or issues about this plugin please let me know that.
+    (5) If you have any questions or issues about this plugin please let me know that.
         my email is: handy.wang@finalist.cn
 Authoer: Handy.Wang
 Author: Vivek Pandey

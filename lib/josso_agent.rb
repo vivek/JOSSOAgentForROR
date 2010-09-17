@@ -29,6 +29,8 @@ class Jossoagent
       @sso_user = resp.sSOUser
     rescue SOAP::FaultError
       return nil
+    rescue SOAP::EmptyResponseError
+      return nil      
     else
       return @sso_user
     end
