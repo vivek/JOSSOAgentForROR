@@ -21,8 +21,7 @@ module Main
   # Check the user's authory
   def authorize
     begin
-      partner_application_entry_url = APP_CONFIG['partner_application_entry_url']
-      partner_application_entry_url = request.url if partner_application_entry_url.nil?
+      partner_application_entry_url = request.url
       logger.info "Partner URL: #{partner_application_entry_url}"
       if (session[:username].nil?)
         login(partner_application_entry_url, params[:josso_assertion_id])
